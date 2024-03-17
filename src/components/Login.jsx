@@ -31,35 +31,37 @@ function Login() {
     <div
     className='flex items-center justify-center w-full'
     >
-        <div className={`mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/10`}
+        <div className={`mx-auto w-full md:max-w-sm rounded-xl p-5 md:p-8 border-slate-800 border`}
         >
-            <div className="mb2 flex justify-center">
-                <span className="inline-block w-full max-w-[100px]">
+            <div className="mb-4 flex justify-center">
+                <span className="inline-block w-full max-w-[80px]">
                     <Logo width='100%' />
                 </span>
             </div>
-            <h2 className="text-center text-2xl font-bold leading-tight">Sign in to your account</h2>
-            <p className='mt-2 text-center text-base text-black/60'>
+            <h2 className="text-center text-lg font-bold leading-tight">Sign in to your account</h2>
+            <p className='mt-2 text-center text-white/60'>
                 Don&apos;t have any account?&nbsp;
                 <Link
                     to="/signup"
-                    className='font-medium text-primary transition-all duration-200 hover:underline'
+                    className='font-medium text-white/80 hover:text-white transition-all duration-200 hover:underline'
                 >
                     Sign Up 
                 </Link>
             </p>
-            {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
+            {error && <p className="text-red-600 mt-6 text-center">{error}</p>}
             <form onSubmit={handleSubmit(login)}
-            className='mt-8'>
-                <div className="space-y-5">
-                    <Input label="Email: "
+            className='mt-6'>
+                <div className="space-y-4">
+                    <Input 
+                    label="Email: "
                     placeholder="Enter your email"
                     type="email"
                     {...register("email",
                     {
                         required: true,
                         validate: {
-                            matchPattern: (value) => /^([\w\.\-_]+)?\w+@[\w-_]+(\.\w+){1,}$/igm.test(value) || "Email address must be a valid address"
+                            matchPattern: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) || 
+                            "Email address must be a valid address"
                         }
                     })}
                     />
@@ -73,7 +75,7 @@ function Login() {
                     />
                     <Button
                     type='submit'
-                    className="w-full"                    
+                    className="my-3 py-2 px-4 w-full text-white bg-blue-500  button-custom rounded-lg shadow-lg hover:bg-blue-700 hover:text-black duration-400 hover:cursor-pointer"                    
                     >Sign in
                     </Button>
                 </div>
