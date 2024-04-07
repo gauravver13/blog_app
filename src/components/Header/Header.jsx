@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import { Button, Container, Logo, LogoutBtn} from '../index'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { useNavigate } from "react-router-dom";
+import hamburgerIcon from "/icon-hamburger.svg";
+import closeIcon from "/icon-close.svg";
+import "./Header.css";
+// import { useNavigate } from "react-router-dom";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth.status)
@@ -10,10 +13,10 @@ function Header() {
 
   const [navOpen, setnavOpen] = useState(false)
 
-  const closeNavbar = () => {
+  const closeNavbar = () => {    
     setnavOpen(false)
   }
-
+   
   const toggleNavbar = () => {
     setnavOpen(!navOpen)
   }
@@ -57,14 +60,23 @@ function Header() {
             </Link>
           </div>
 
-          <ul className='ml-auto md:w-auto md:items-center md:flex-row md:flex border-red-600 ${  navOpen ? "w-full flex flex-col items-center" : "hidden" }'>
-              {navItems.map((item) => 
+          <div className="md:hidden mr-4">
+            <Button
+            onClick={toggleNavbar}
+            >
+              <img src={navOpen ? closeIcon : hamburgerIcon} alt="" />
+            </Button>
+          </div>
+          
+          <ul 
+          className={`ml-auto md:w-auto md:items-center md:flex-row md:flex border-red-600 ${ navOpen ? "w-full flex flex-col items-center" : "hidden" }`}>
+              {navItems.map( (item) => 
               item.active && (
                 <li key={item.name} className='my-2 md:my-0 '>
                   <NavLink
-                  onClick={() => {closeNavbar} }
+                  onClick={{closeNavbar} }
                   to={item.slug}
-                  className='inline-block px-6 py-2 duration-200 hover:bg-blue-100 rounded-full'>
+                  className='inline-block px-6 py-2 duration-200 hover:text-gray-600 '>
                     {item.name}
                   </NavLink>
                 </li>
@@ -72,17 +84,18 @@ function Header() {
               )}
 
               {authStatus && (
-                <li>
+                <li
+                onClick={closeNavbar}>
                 <LogoutBtn />
                 </li>
-              )}
+              )} 
+
                 <li>
                 <Button
-                className='inline-block px-6 py-2 duration-200 hover:bg-blue-100 rounded-full'
+                className='inline-block px-6 py-2 duration-200 hover:bg-blue-100'
                 >Mode
                 </Button>
                 </li>
-
           </ul>
         </nav>
       </Container>

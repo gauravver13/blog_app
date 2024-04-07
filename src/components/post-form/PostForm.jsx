@@ -78,15 +78,15 @@ export default function PostForm({ post }) {
 
   return (
         <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-            <div className="w-2/3 px-2">
+            <div className="w-full lg:w-2/3 px-2">
                 <Input
-                    label="Title :"
+                    label={<>Title<span className='text-red-500'>*</span>:</>}
                     placeholder="Title"
                     className="mb-4"
                     {...register("title", { required: true })}
                 />
                 <Input
-                    label="Slug :"
+                    label={<>Slug<span className='text-red-500'>*</span>:</>}
                     placeholder="Slug"
                     className="mb-4"
                     {...register("slug", { required: true })}
@@ -94,7 +94,7 @@ export default function PostForm({ post }) {
                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate : true });
                     }}
                 />
-                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+                <RTE label = "Content :" name="content" control={control} defaultValue={getValues("content")} />
                 {/* <Input 
                     label="Author :"
                     placeholder="Author"
@@ -102,14 +102,15 @@ export default function PostForm({ post }) {
                     {...register("author")}
                 /> */}
             </div>
-            <div className="w-1/3 px-2">
+            <div className="w-full lg:w-1/3 px-2">
                 <Input
-                    label="Featured Image :"
+                    label={<>Featured Image<span className='text-red-500'>*</span>:</>}
                     type="file"
                     className="mb-4"
                     accept="image/png, image/jpg, image/jpeg, image/gif"
                     {...register("image", { required: !post })}
                 />
+
                 {post && (
                     <div className="w-full mb-4">
                         <img
@@ -128,7 +129,10 @@ export default function PostForm({ post }) {
                 {/* {loading? 
                     <div className='w-full grid place-items-center'> <Loader></Loader></div>
                     :         */}
-                <Button type="submit" bgColor={post ? "bg-green-500" : undefined} className="w-full">
+                <Button 
+                type="submit" 
+                bgColor={post ? "bg-green-500" : undefined} 
+                className= {` ${post? "hover:shadow-green-500 text-black " : " hover:shadow-customPink text-white "} shadow-sm hover:cursor-pointer duration-200 hover:drop-shadow-2xl rounded-lg w-full`} >
                     {post ? "Update" : "Submit"}
                 </Button>
             </div>
