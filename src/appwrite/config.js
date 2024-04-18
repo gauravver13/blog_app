@@ -193,7 +193,6 @@ export class Service{
 
             return result.documents.map((user) => user.userId)
 
-            if()
         } catch (error) {
             console.log('Error showing usernames');
         }
@@ -201,7 +200,22 @@ export class Service{
 
     async getLikesByUserAndPost(userId, postId){
         try {
-            
+            const query = [
+                Query.equal("userId", userId),
+                Query.equal("postId", postId)
+            ];
+            const result = await this.databases.listDocuments(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                query
+            );
+      
+            // Check if any likes were found
+            if (result.documents.length > 0) {
+                return true; // Return true if likes exist for the given user and post
+            } else {
+                return false; // Return false if no likes were found
+            }
         } catch (error) {
             console.log("Appwrite Service :: Get Likes By User And Post :: Error :: ", error);
             throw error; 

@@ -79,11 +79,12 @@ function Signup() {
                         required: true,
                     })}
                     />
-                    {loading ?  <div className='w-full grid place-items-center'> <Loader></Loader> </div> : <Button
+                    {loading ?  <div className='w-full grid place-items-center'> <Loader /> </div> : <Button
                     type="submit"
                     className="my-3 py-2 px-4 w-full text-white bg-[#00040F] button-custom rounded-lg shadow-lg hover:bg-[#5647e4] hover:text-black duration-400 hover:cursor-pointer"
                     >create Account
-                    </Button> }
+                    </Button> 
+                    }
                 </div>
             </form>
         </div>

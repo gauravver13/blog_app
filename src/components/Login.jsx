@@ -11,8 +11,10 @@ function Login() {
     const dispatch = useDispatch()
     const {register, handleSubmit} = useForm()
     const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false);
 
     const login = async(data) => {
+        setLoading(true);
         setError("")
         try {
             const session = await authService.login(data)
@@ -20,13 +22,24 @@ function Login() {
                 const userData = await authService.
                 getCurrentUser()
                 if(userData) dispatch(authLogin(userData));
-                navigate("/")
+                navigate("/all-posts")
             }
             
         } catch (error) {
             setError(error.message)
+        } finally{
+            setLoading(false)
         }
     }
+
+    const handleRecruiterDemoLogin = async () => {
+        const testCredentials = {
+            email: 'talentseeker.logincheck@gmail.com',
+            password: '12345678'
+        };
+        await login(testCredentials);
+    };
+
   return (
     <div
     className='flex items-center justify-center w-full'
@@ -73,11 +86,15 @@ function Login() {
                         required: true,
                     })}
                     />
+                     {loading? 
+                            <div className='w-full grid place-items-center'> <Loader></Loader></div>
+                            :
                     <Button
                     type='submit'
                     className="my-3 py-2 px-4 w-full text-white bg-blue-500  button-custom rounded-lg shadow-lg hover:bg-blue-700 hover:text-black duration-400 hover:cursor-pointer"                    
                     >Sign in
                     </Button>
+                    }
                 </div>
             </form>
         </div>
