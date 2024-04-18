@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react'
-import { Button, Input, Select, RTE } from '..'
+import { Button, Input, Select, RTE, Loader } from '..'
 import appwriteService from '../../appwrite/config'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -9,8 +9,8 @@ import { useSelector } from 'react-redux'
 export default function PostForm({ post }) {
     const {register, handleSubmit, watch, setValue, control, getValues } = useForm({
         defaultValues: {
-            title: post?.title || "",
-            slug: post?.$id || "",
+            title: post?.title || "Caption to replicate your thoughts to post",
+            slug: post?.$id || "give a caption above!",
             content: post?.content || "",
             status: post?.status || 'active',
             // author: post?.author || "Anonymous", 
@@ -19,40 +19,44 @@ export default function PostForm({ post }) {
 
     const navigate = useNavigate();
     const userData = useSelector((state) => state.auth.userData);
-    // const [loading, setLoading] = useState(false); 
+    const [loading, setLoading] = useState(false); 
 
     const submit = async (data) => {
-        // setLoading(true);
-        if(post) {
-            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
-            // console.log("file uploaded")
-            if(file) {
-                appwriteService.deleteFile(post.featuredImage);
-            }
-
-            const dbPost = await appwriteService.updatePost(post.$id, {
-                ...data,
-                featuredImage: file ? file.$id : undefined,
-            });
-
-            if(dbPost) {
-                // setLoading(false)
-                navigate(`/post/${dbPost.$id}`);
-            }
-        } else {
-            const file = await appwriteService.uploadFile(data.image[0]);
-
-            if (file) {
-                const fileId = file.$id;
-                data.featuredImage = fileId;
-                    const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
-    
+        setLoading(true);
+        try {
+                if(post) {
+                    const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+                    // console.log("file uploaded")
+                    
+                    if(file) {
+                        appwriteService.deleteFile(post.featuredImage);
+                    }
+        
+                    const dbPost = await appwriteService.updatePost(post.$id, {
+                        ...data,
+                        featuredImage: file ? file.$id : undefined,
+                    });
+        
                     if(dbPost) {
-                        navigate(`/post/${dbPost.$id}`)
-                    }   
-            } 
-            // finally {setLoading(false)}
-        }
+                        // setLoading(false)
+                        navigate(`/post/${dbPost.$id}`);
+                    }
+                } else {
+                    const file = await appwriteService.uploadFile(data.image[0]);
+        
+                    if (file) {
+                        const fileId = file.$id;
+                        data.featuredImage = fileId;
+                            const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
+            
+                            if(dbPost) {
+                                navigate(`/post/${dbPost.$id}`)
+                            }   
+                    } 
+                }
+        } catch (error) {
+            prompt(error.message);
+        } finally {setLoading(false)}
     };
 
     const slugTransform = useCallback((value) => {
@@ -126,15 +130,17 @@ export default function PostForm({ post }) {
                     className="mb-4"
                     {...register("status", { required: true })}
                 />
-                {/* {loading? 
-                    <div className='w-full grid place-items-center'> <Loader></Loader></div>
-                    :         */}
+                {loading? 
+                    <div className='w-full grid place-items-center'> <Loader/>
+                    </div>
+                    :        
                 <Button 
                 type="submit" 
                 bgColor={post ? "bg-green-500" : undefined} 
                 className= {` ${post? "hover:shadow-green-500 text-black " : " hover:shadow-customPink text-white "} shadow-sm hover:cursor-pointer duration-200 hover:drop-shadow-2xl rounded-lg w-full`} >
                     {post ? "Update" : "Submit"}
-                </Button>
+                </Button> }
+
             </div>
         </form>
     );

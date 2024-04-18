@@ -1,5 +1,6 @@
 import conf from "../conf/conf.js";
 import { Client, ID, Databases, Storage, Query } from "appwrite";
+import authService from "./auth.js";
 
 export class Service{
     client = new Client();
@@ -15,7 +16,9 @@ export class Service{
     }
 
     // create likes and author with captions!
-    async createPost({title, slug, content, featuredImage, status, userId}) {
+
+    // CRUD:
+    async createPost({title, slug, content, featuredImage, status, userId, author, likes=0}) {
         try {
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
@@ -29,6 +32,8 @@ export class Service{
                     featuredImage,
                     status,
                     userId,
+                    author,
+                    likes
                 }
             )
         } catch (error) {
@@ -36,7 +41,22 @@ export class Service{
         }
     }
 
-    async updatePost(slug, {title, content, featuredImage, status}) {
+    
+    async getPost(slug) {
+        try {
+            return await this.databases.getDocument(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                slug
+            )
+        } catch (error) {
+            console.log("Appwrite service :: updatePost :: error", error);
+            return false
+        }
+    }
+
+
+    async updatePost(slug, {title, content, featuredImage, status, author, likes}) {
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
@@ -46,13 +66,15 @@ export class Service{
                     title,
                     content,
                     featuredImage,
-                    status
+                    status,
+                    author
                 }
             )
         } catch (error) {
             console.log("Appwrite service :: updatePost :: error", error);
         }
     }
+
 
     async deletePost(slug) {
         try {
@@ -68,18 +90,6 @@ export class Service{
         }
     }
 
-    async getPost(slug) {
-        try {
-            return await this.databases.getDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                slug
-            )
-        } catch (error) {
-            console.log("Appwrite service :: updatePost :: error", error);
-            return false
-        }
-    }
 
     // Learn Pagination just after queries 
     // Queries:
@@ -95,6 +105,109 @@ export class Service{
             return false
         }
     } 
+
+    async createLike(postId) {
+
+        const userId = await authService.userId();
+        const lastFiveChars = userId.slice(-5);
+        const likeId = `${lastFiveChars}_${postId}`
+
+        try {
+            const likeExists = await this.getLikesByUserAndPost(userId, postId);
+
+            // check if the like already exists or not!
+            if(likeExists){
+                return;
+            } else {
+                // like doesn't exist, proceed to create it
+                await this.databases.createDocumentcreateDocument(
+                    conf.appwriteDatabaseId,
+                    conf.appwriteCollectionId,
+                    likeId,
+                    { 
+                        likeId,
+                        userId,
+                        postId
+                    }
+                );
+
+                // Increment likes count in the blog post document!
+                const post = await this.getPost(postId)
+                const currentLikes = post.likes || 0
+                const newLikes = currentLikes + 1
+                await this.databases.updateDocument(
+                    conf.appwriteDatabaseId,
+                    conf.appwriteCollectionId,
+                    postId,
+                    {
+                        likes : newLikes
+                    }
+                )
+
+            }
+        } catch (error) {
+            console.log("Appwrite Service :: Create Like :: Error ", error);
+        }
+    }
+
+    async deleteLike(likeId) {
+        try {
+            await this.databases.deleteDocument(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                likeId
+            )
+
+            const postId = likeId.split("_")[1];
+            const post = await this.getPost(postId)
+            const currentLikes = post.likes || 0;
+
+            const newLikes = Math.max(currentLikes - 1, 0)
+
+            //Update likes count in the blog post document
+            await this.databases.updateDocument(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                postId,
+                { likes: newLikes }
+            )
+
+        } catch (error) {
+            console.log("Appwrite Service :: delete Like :: Error ", error);
+        }
+    }
+
+    async displayLike(postId){
+        console.log(postId);
+
+        try {
+            const query = [
+                Query.equal("postId", postId)
+            ];
+
+            const result = await this.databases.listDocuments(
+                conf.appwriteDatabaseId,
+                conf.appwriteCollectionId,
+                query
+            )
+
+            return result.documents.map((user) => user.userId)
+
+            if()
+        } catch (error) {
+            console.log('Error showing usernames');
+        }
+    }
+
+    async getLikesByUserAndPost(userId, postId){
+        try {
+            
+        } catch (error) {
+            console.log("Appwrite Service :: Get Likes By User And Post :: Error :: ", error);
+            throw error; 
+        }
+    }
+
 
     // File upload Service|Method
     async uploadFile(file){
