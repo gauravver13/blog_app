@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Input, Select, RTE, Loader } from '..'
 import appwriteService from '../../appwrite/config'
 import { useForm } from 'react-hook-form'
@@ -13,7 +13,7 @@ export default function PostForm({ post }) {
             slug: post?.$id || "give a caption above!",
             content: post?.content || "",
             status: post?.status || 'active',
-            // author: post?.author || "Anonymous", 
+            author: post?.author || "Anonymous", 
         },
     })
 
@@ -99,12 +99,12 @@ export default function PostForm({ post }) {
                     }}
                 />
                 <RTE label = "Content :" name="content" control={control} defaultValue={getValues("content")} />
-                {/* <Input 
+                <Input 
                     label="Author :"
                     placeholder="Author"
                     className="mb-4"
                     {...register("author")}
-                /> */}
+                />
             </div>
             <div className="w-full lg:w-1/3 px-2">
                 <Input
@@ -131,16 +131,17 @@ export default function PostForm({ post }) {
                     {...register("status", { required: true })}
                 />
                 {loading? 
-                    <div className='w-full grid place-items-center'> <Loader/>
+                    <div className='w-full grid place-items-center'> 
+                    <Loader></Loader>
                     </div>
                     :        
-                <Button 
-                type="submit" 
-                bgColor={post ? "bg-green-500" : undefined} 
-                className= {` ${post? "hover:shadow-green-500 text-black " : " hover:shadow-customPink text-white "} shadow-sm hover:cursor-pointer duration-200 hover:drop-shadow-2xl rounded-lg w-full`} >
-                    {post ? "Update" : "Submit"}
-                </Button> }
+                    <Button
+                    type="submit" 
+                    bgColor={post ? "bg-green-500" : undefined} 
+                    className= {` ${post? "hover:shadow-green-500 text-black " : " hover:shadow-customPink text-white "} "my-3 py-2 px-4 w-full text-white bg-blue-500  button-custom rounded-lg shadow-lg hover:bg-blue-700 hover:text-black duration-400 hover:cursor-pointer"`} >
 
+                        {post ? "Update" : "Submit"}
+                    </Button> }
             </div>
         </form>
     );
