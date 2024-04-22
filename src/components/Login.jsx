@@ -9,9 +9,9 @@ import { useDispatch } from 'react-redux'
 function Login() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const {register, handleSubmit} = useForm()
-    const [error, setError] = useState("")
-    const [loading, setLoading] = useState(false);
+    const { register, handleSubmit } = useForm()
+    const [ error, setError ] = useState("")
+    const [ loading, setLoading ] = useState(false);
 
     const login = async(data) => {
         setLoading(true);
