@@ -1,6 +1,9 @@
 import React from 'react'
 import appwriteService from "../appwrite/config"
 import { Link } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
+
 
 function PostCard({
   $id, 
@@ -17,8 +20,17 @@ function PostCard({
                 className='rounded-xl h-full object-cover' />
             </div>
             <h2
-            className='text-lg font-bold'
+            className='text-lg font-bold gap-10'
             >{title}</h2>
+            <div className='flex items-center gap-10'>
+              <p className="text-gray-500 justify-left">{author ? author : "Anonymous"}</p>
+                  <div className='flex items-center text-sm'>
+                     <FontAwesomeIcon icon={faHeart} className='mr-1' />
+                        <span className="text-sm">
+                            {likes}
+                        </span>
+                  </div>
+            </div>
         </div>
     </Link>
   )

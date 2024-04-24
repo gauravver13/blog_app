@@ -99,6 +99,7 @@ export default function PostForm({ post }) {
                     }}
                 />
                 <RTE label = "Content :" name="content" control={control} defaultValue={getValues("content")} />
+                
                 <Input 
                     label="Author :"
                     placeholder="Author"
