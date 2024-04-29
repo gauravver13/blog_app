@@ -18,17 +18,23 @@ Completed Task:
         conf.js
 
     Components:
+            Container
+            Footer!
+            Header
+            PostForm
+            
+        AuthLayout
         Button
-        Container
-        Select
-        PostForm
-        Input
         index.js 
-        PostCard
-        Signup! css peeping
+        Input
         Loader!
-        MiniLoader!
+        Login
         Logo
+        MiniLoader!
+        PostCard
+        RTE!
+        Select
+        Signup! css peeping
         
         RTE! in production
         Header!
