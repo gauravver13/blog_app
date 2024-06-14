@@ -1,18 +1,21 @@
 import React, {useState} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import { login as authLogin } from '../store/authSlice'
-import {Button, Input, Logo} from "./index"
+import {Button, Input, Loader, Logo} from "./index"
 import authService from '../appwrite/auth'
 import { useForm } from "react-hook-form"
 import { useDispatch } from 'react-redux'
 
+
 function Login() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const {register, handleSubmit} = useForm()
-    const [error, setError] = useState("")
+    const { register, handleSubmit } = useForm()
+    const [ error, setError ] = useState("")
+    const [ loading, setLoading ] = useState(false);
 
     const login = async(data) => {
+        setLoading(true);
         setError("")
         try {
             const session = await authService.login(data)
@@ -20,16 +23,27 @@ function Login() {
                 const userData = await authService.
                 getCurrentUser()
                 if(userData) dispatch(authLogin(userData));
-                navigate("/")
+                navigate("/all-posts")
             }
             
         } catch (error) {
             setError(error.message)
+        } finally{
+            setLoading(false)
         }
     }
+
+    // const handleRecruiterDemoLogin = async () => {
+    //     const testCredentials = {
+    //         email: 'talentseeker.logincheck@gmail.com',
+    //         password: '12345678'
+    //     };
+    //     await login(testCredentials);
+    // };
+
   return (
     <div
-    className='flex items-center justify-center w-full'
+    className='flex md:min-h-[80vh] justify-center w-full'
     >
         <div className={`mx-auto w-full md:max-w-sm rounded-xl p-5 md:p-8 border-slate-800 border`}
         >
@@ -48,7 +62,9 @@ function Login() {
                     Sign Up 
                 </Link>
             </p>
+
             {error && <p className="text-red-600 mt-6 text-center">{error}</p>}
+            
             <form onSubmit={handleSubmit(login)}
             className='mt-6'>
                 <div className="space-y-4">
@@ -73,11 +89,15 @@ function Login() {
                         required: true,
                     })}
                     />
+                     {loading? 
+                            <div className='w-full grid place-items-center'> <Loader></Loader></div>
+                            :
                     <Button
                     type='submit'
                     className="my-3 py-2 px-4 w-full text-white bg-blue-500  button-custom rounded-lg shadow-lg hover:bg-blue-700 hover:text-black duration-400 hover:cursor-pointer"                    
                     >Sign in
                     </Button>
+                    }
                 </div>
             </form>
         </div>
