@@ -87,11 +87,17 @@ function Signup() {
                             <div className='w-full grid place-items-center'> <Loader></Loader></div>
                             :
                             <Button type="submit"
-                            style={{marginTop: "1.5rem"}}
-                                className="my-3 py-2 px-4 w-full md:py-3 text-white bg-customPurple button-custom rounded-lg shadow-lg hover:bg-[#7974f8f5] duration-400 hover:cursor-pointer"
+                                className=" py-2 px-4 w-full md:py-[0.8rem] gradient-btn text-white font-weight-400 border border-gray-600 rounded-lg shadow-lg duration-200 hover:cursor-pointer md:mx-0 my-3"
+                                // className="my-3 py-2 px-4 w-full md:py-[0.7rem] text-white bg-customPurple button-custom rounded-lg shadow-lg hover:bg-[#7974f8f5] duration-400 hover:cursor-pointer"
                             >
                                 Create Account
                             </Button>}
+                            {/* <Button
+                                onClick={() => navigateProfile()}
+                                className=" py-2 px-5 gradient-btn text-white font-weight-400 border border-gray-600 rounded-lg shadow-lg duration-200 hover:cursor-pointer md:mx-2 md:my-6"
+                            >
+                                {status ? "See Posts" : "Get Started"}
+                            </Button> */}
                     </div>
                 </form>
             </div>

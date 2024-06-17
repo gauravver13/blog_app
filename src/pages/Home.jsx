@@ -3,6 +3,7 @@ import appwriteService from "../appwrite/config";
 import { Container, PostCard, Button } from '../components';
 import HomeDummyPostcard from '../components/HomeDummy/HomeDummyPostCard';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
     const status = useSelector((state) => state.auth.status);
@@ -17,14 +18,25 @@ function Home() {
         })
     }, [])
 
+  
+    const navigate = useNavigate()
+
     const navigateProfile = () => {
         if (status) {
-            navigate(`/profile/${userId}`);
+            navigate(`/all-posts`);
             }
             else {
-                navigate("/login");
+                navigate("/signup");
             }
         };
+    const navigateAddPost = () => {
+      navigate(`/add-post`)
+    }
+    
+    const navigateAllPost = () => {
+      navigate(`/all-post`)
+    }
+    
     // const videoRef = useRef(null);
 
     // useEffect(() => {
@@ -33,7 +45,7 @@ function Home() {
     // }
     // }, []);
   
-    return (
+    return ( 
         <div className="w-full my-20 md:py-8 text-center md:min-h-auto">
           {/* <Spotlight
             className="-top-40 left-0 md:left-60 md:-top-20"
@@ -48,14 +60,14 @@ function Home() {
 
                 <div className="mx-auto my-7 lg:mt-10 flex gap-4 flex-col lg:flex-row">
                   <Button
-                    onClick={() => navigateHome()}
+                    onClick={() => navigateProfile()}
                     className="md:py-[0.7rem] py-0 px-5 gradient-btn text-white font-weight-400 border border-gray-600 rounded-lg shadow-lg duration-200 hover:cursor-pointer md:mx-2 md:my-6"
                   >
                     {status ? "See Posts" : "Get Started"}
                   </Button>
                   {status && (
                   <Button
-                    onClick={() => navigateProfile()}
+                    onClick={() => navigate(`/all-posts`)}
                     className=" md:py-[0.7rem] btn-shadow py-0 px-5 text-white font-weight-400 border border-gray-600 rounded-lg shadow-lg duration-200 hover:cursor-pointer md:mx-2 md:my-6"
                   >
                     Visit Profile
@@ -63,7 +75,7 @@ function Home() {
                   )}
                    {status && (
                   <Button
-                    onClick={() => navigateAddPost()}
+                    onClick={() => navigate(`/add-post`)}
                     className=" md:py-[0.7rem] btn-shadow py-0 px-5 text-white font-weight-400 border border-gray-600 rounded-lg shadow-lg duration-200 hover:cursor-pointer md:mx-2 md:my-6"
                   >
                     Add Post
