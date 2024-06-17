@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Input, Select, RTE, Loader } from '..'
-import appwriteService from '../../appwrite/config'
+import appwriteService  from '../../appwrite/config'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 
 export default function PostForm({ post }) {
+
     const {register, handleSubmit, watch, setValue, control, getValues } = useForm({
         defaultValues: {
-            title: post?.title || "Caption to replicate your thoughts to post",
-            slug: post?.$id || "give a caption above!",
+            title: post?.title || "Title",
+            slug: post?.$id || "Slug!",
             content: post?.content || "",
             status: post?.status || 'active',
             author: post?.author || "Anonymous", 
@@ -22,11 +23,12 @@ export default function PostForm({ post }) {
     const [loading, setLoading] = useState(false); 
 
     const submit = async (data) => {
+        console.log('Hello world')
         setLoading(true);
-        try {
+
                 if(post) {
                     const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
-                    // console.log("file uploaded")
+                    console.log("file uploaded")
                     
                     if(file) {
                         appwriteService.deleteFile(post.featuredImage);
@@ -47,16 +49,21 @@ export default function PostForm({ post }) {
                     if (file) {
                         const fileId = file.$id;
                         data.featuredImage = fileId;
+                        try { 
                             const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
             
                             if(dbPost) {
                                 navigate(`/post/${dbPost.$id}`)
-                            }   
+                            }
+                        }
+                        catch (error) {
+                            prompt(error.message);
+                        } finally {
+                            setLoading(false)
+                        }
                     } 
                 }
-        } catch (error) {
-            prompt(error.message);
-        } finally {setLoading(false)}
+
     };
 
     const slugTransform = useCallback((value) => {
@@ -86,13 +93,15 @@ export default function PostForm({ post }) {
                 <Input
                     label={<>Title<span className='text-red-500'>*</span>:</>}
                     placeholder="Title"
-                    className="mb-4"
+                    className="mb-4 border border-gray-600 rounded-lg bg-black text-white focus:bg-black focus:outline focus:ring-none"
+                    style={{'backgroundColor': 'black', 'color': 'white'}}
                     {...register("title", { required: true })}
                 />
                 <Input
                     label={<>Slug<span className='text-red-500'>*</span>:</>}
                     placeholder="Slug"
-                    className="mb-4"
+                    className="mb-4 border border-gray-600 text-white rounded-lg bg-black focus:bg-black focus:outline focus:ring-none"
+                    style={{'backgroundColor': 'black', 'color': 'white'}}
                     {...register("slug", { required: true })}
                     onInput={(e) => {
                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate : true });
@@ -103,7 +112,8 @@ export default function PostForm({ post }) {
                 <Input 
                     label="Author :"
                     placeholder="Author"
-                    className="mb-4"
+                    style={{'backgroundColor': 'black', 'color': 'white'}}
+                    className="mb-4 border border-gray-600 text-white rounded-lg bg-black focus:bg-black focus:outline focus:ring-none cursor-not-allowed"
                     {...register("author")}
                 />
             </div>
@@ -111,7 +121,8 @@ export default function PostForm({ post }) {
                 <Input
                     label={<>Featured Image<span className='text-red-500'>*</span>:</>}
                     type="file"
-                    className="mb-4"
+                    style={{'backgroundColor': 'black', 'color': 'white'}}
+                    className="mb-4 border border-gray-600 text-white rounded-lg bg-black focus:bg-black focus:outline focus:ring-none"
                     accept="image/png, image/jpg, image/jpeg, image/gif"
                     {...register("image", { required: !post })}
                 />
@@ -128,7 +139,8 @@ export default function PostForm({ post }) {
                 <Select
                     options={["active", "inactive"]}
                     label="Status"
-                    className="mb-4"
+                    style={{'backgroundColor': 'black', 'color': 'white'}}
+                    className="mb-4 border border-gray-600 text-white rounded-lg bg-black focus:bg-black focus:outline focus:ring-none"
                     {...register("status", { required: true })}
                 />
                 {loading? 
@@ -139,7 +151,7 @@ export default function PostForm({ post }) {
                     <Button
                     type="submit" 
                     bgColor={post ? "bg-green-500" : undefined} 
-                    className= {` ${post? "hover:shadow-green-500 text-black " : " hover:shadow-customPink text-white "} "my-3 py-2 px-4 w-full text-white bg-blue-500  button-custom rounded-lg shadow-lg hover:bg-blue-700 hover:text-black duration-400 hover:cursor-pointer"`} >
+                    className= {` ${post? "hover:shadow-green-500 text-black " : " hover:shadow-customPurple text-white "} "my-3 py-2 px-4 w-full text-white bg-blue-500  button-custom rounded-lg shadow-lg hover:bg-blue-700 hover:text-black duration-400 hover:cursor-pointer"`} >
 
                         {post ? "Update" : "Submit"}
                     </Button> }

@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 
-function Logo({width = '100px'}) {
+function Logo() {
   return (
     <div>
-      <h1 className='font-extrabold text-blue-500 text-lg'>blog_app</h1>
+      <h1 className='font-bold text-[#605BFF] text-lg'>BlogHub</h1>
     </div>
-  )
+  );
 }
 
-export default Logo
+export default Logo;

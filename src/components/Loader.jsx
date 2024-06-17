@@ -1,13 +1,7 @@
 import React from 'react'
 
-function Loader() {
-    return (
-        <div class="flex flex-row gap-2">
-            <div class="w-4 h-4 rounded-full bg-customPink animate-bounce"></div>
-            <div class="w-4 h-4 rounded-full bg-customPink animate-bounce [animation-delay:-.1s]"></div>
-            <div class="w-4 h-4 rounded-full bg-customPink animate-bounce [animation-delay:-.2s]"></div>
-        </div>
-    )
+function Container({children}) {
+  return <div className='w-full max-w-7xl mx-auto px-4' >{children}</div>;
 }
 
-export default Loader
+export default Container

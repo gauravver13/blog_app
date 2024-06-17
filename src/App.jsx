@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import './App.css'
 import authService from './appwrite/auth'
 import { login, logout } from "./store/authSlice"
 import { Footer, Header, Loader } from './components'
@@ -32,29 +31,28 @@ function App() {
     checkAuthStatus();
     }, [dispatch]);
 
-  return (
-    <div className='min-h-screen flex flex-wrap content-between text-white bg-[#00040F] items-center justify-center'>
-    {loading && (
-      <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#00040F]">
-        <Loader />
+    return (
+      <div className='min-h-screen flex flex-wrap content-between text-white bg-[#00040F] items-center justify-center'>
+        {loading && (
+          <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-[#00040F]">
+            <Loader />
+          </div>
+        )}
+        {!loading && (
+          <>
+            <div className="w-full block">
+              <Header />
+              <main>
+                <Outlet />
+              </main>
+              <Footer />
+            </div>
+            <div className="absolute z-[3] -left-1/2 top-0 w-[50%] h-[50%] rounded-full white__gradient" />
+            <div className="absolute z-[0] w-[30%] h-[30%] -left-1/2 bottom-0 rounded-full blue__gradient" />
+          </>
+        )}
       </div>
-    )}
-    {!loading && (
-    <>
-    {/* <div className='min-h-screen flex flex-wrap content-between text-white bg-[#00040F] items-center justify-center '> */}
-      <div className='w-full block'>
-        <Header />
-        <main>
-          <Outlet />  //TODO: to handle later on
-        </main>
-        <Footer />
-      </div> 
-      <div className="absolute z-[3] -left-1/2 top-0 w-[50%] h-[50%] rounded-full white__gradient" />
-      <div className="absolute z-[0] w-[30%] h-[30%] -left-1/2 bottom-0 rounded-full blue__gradient" />
-    </>
-    )}
-    </div>
-  );
-}
-
-export default App
+    );
+  }
+  
+  export default App;

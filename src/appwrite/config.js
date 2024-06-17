@@ -18,7 +18,7 @@ export class Service{
     // create likes and author with captions!
 
     // CRUD:
-    async createPost({title, slug, content, featuredImage, status, userId, author, likes=0}) {
+    async createPost({title, slug, content, featuredImage, status, userId, author }) {
         try {
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
@@ -32,8 +32,7 @@ export class Service{
                     featuredImage,
                     status,
                     userId,
-                    author,
-                    likes
+                    author
                 }
             )
         } catch (error) {
@@ -56,7 +55,8 @@ export class Service{
     }
 
 
-    async updatePost(slug, {title, content, featuredImage, status, author, likes}) {
+    async updatePost(slug, 
+        {title, content, featuredImage, status, author, likes}) {
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
@@ -106,121 +106,121 @@ export class Service{
         }
     } 
 
-    async createLike(postId) {
+    // async createLike(postId) {
 
-        const userId = await authService.userId();
-        const lastFiveChars = userId.slice(-5);
-        const likeId = `${lastFiveChars}_${postId}`
+    //     const userId = await authService.userId();
+    //     const lastFiveChars = userId.slice(-5);
+    //     const likeId = `${lastFiveChars}_${postId}`
 
-        try {
-            const likeExists = await this.getLikesByUserAndPost(userId, postId);
+    //     try {
+    //         const likeExists = await this.getLikesByUserAndPost(userId, postId);
 
-            // check if the like already exists or not!
-            if(likeExists){
-                return;
-            } else {
-                // like doesn't exist, proceed to create it
-                await this.databases.createDocumentcreateDocument(
-                    conf.appwriteDatabaseId,
-                    conf.appwriteCollectionId,
-                    likeId,
-                    { 
-                        likeId,
-                        userId,
-                        postId
-                    }
-                );
+    //         // check if the like already exists or not!
+    //         if(likeExists){
+    //             return;
+    //         } else {
+    //             // like doesn't exist, proceed to create it
+    //             await this.databases.createDocumentcreateDocument(
+    //                 conf.appwriteDatabaseId,
+    //                 conf.appwriteCollectionId,
+    //                 likeId,
+    //                 { 
+    //                     likeId,
+    //                     userId,
+    //                     postId
+    //                 }
+    //             );
 
-                // Increment likes count in the blog post document!
-                const post = await this.getPost(postId)
-                const currentLikes = post.likes || 0
-                const newLikes = currentLikes + 1
-                await this.databases.updateDocument(
-                    conf.appwriteDatabaseId,
-                    conf.appwriteCollectionId,
-                    postId,
-                    {
-                        likes : newLikes
-                    }
-                )
+    //             // Increment likes count in the blog post document!
+    //             const post = await this.getPost(postId)
+    //             const currentLikes = post.likes || 0
+    //             const newLikes = currentLikes + 1
+    //             await this.databases.updateDocument(
+    //                 conf.appwriteDatabaseId,
+    //                 conf.appwriteCollectionId,
+    //                 postId,
+    //                 {
+    //                     likes : newLikes
+    //                 }
+    //             )
 
-            }
-        } catch (error) {
-            console.log("Appwrite Service :: Create Like :: Error ", error);
-        }
-    }
+    //         }
+    //     } catch (error) {
+    //         console.log("Appwrite Service :: Create Like :: Error ", error);
+    //     }
+    // }
 
-    async deleteLike(likeId) {
-        try {
-            await this.databases.deleteDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                likeId
-            )
+    // async deleteLike(likeId) {
+    //     try {
+    //         await this.databases.deleteDocument(
+    //             conf.appwriteDatabaseId,
+    //             conf.appwriteCollectionId,
+    //             likeId
+    //         )
 
-            const postId = likeId.split("_")[1];
-            const post = await this.getPost(postId)
-            const currentLikes = post.likes || 0;
+    //         const postId = likeId.split("_")[1];
+    //         const post = await this.getPost(postId)
+    //         const currentLikes = post.likes || 0;
 
-            const newLikes = Math.max(currentLikes - 1, 0)
+    //         const newLikes = Math.max(currentLikes - 1, 0)
 
-            //Update likes count in the blog post document
-            await this.databases.updateDocument(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                postId,
-                { likes: newLikes }
-            )
+    //         //Update likes count in the blog post document
+    //         await this.databases.updateDocument(
+    //             conf.appwriteDatabaseId,
+    //             conf.appwriteCollectionId,
+    //             postId,
+    //             { likes: newLikes }
+    //         )
 
-        } catch (error) {
-            console.log("Appwrite Service :: delete Like :: Error ", error);
-        }
-    }
+    //     } catch (error) {
+    //         console.log("Appwrite Service :: delete Like :: Error ", error);
+    //     }
+    // }
 
-    async displayLike(postId){
-        console.log(postId);
+    // async displayLike(postId){
+    //     console.log(postId);
 
-        try {
-            const query = [
-                Query.equal("postId", postId)
-            ];
+    //     try {
+    //         const query = [
+    //             Query.equal("postId", postId)
+    //         ];
 
-            const result = await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                query
-            )
+    //         const result = await this.databases.listDocuments(
+    //             conf.appwriteDatabaseId,
+    //             conf.appwriteCollectionId,
+    //             query
+    //         )
 
-            return result.documents.map((user) => user.userId)
+    //         return result.documents.map((user) => user.userId)
 
-        } catch (error) {
-            console.log('Error showing usernames');
-        }
-    }
+    //     } catch (error) {
+    //         console.log('Error showing usernames');
+    //     }
+    // }
 
-    async getLikesByUserAndPost(userId, postId){
-        try {
-            const query = [
-                Query.equal("userId", userId),
-                Query.equal("postId", postId)
-            ];
-            const result = await this.databases.listDocuments(
-                conf.appwriteDatabaseId,
-                conf.appwriteCollectionId,
-                query
-            );
+    // async getLikesByUserAndPost(userId, postId){
+    //     try {
+    //         const query = [
+    //             Query.equal("userId", userId),
+    //             Query.equal("postId", postId)
+    //         ];
+    //         const result = await this.databases.listDocuments(
+    //             conf.appwriteDatabaseId,
+    //             conf.appwriteCollectionId,
+    //             query
+    //         );
       
-            // Check if any likes were found
-            if (result.documents.length > 0) {
-                return true; // Return true if likes exist for the given user and post
-            } else {
-                return false; // Return false if no likes were found
-            }
-        } catch (error) {
-            console.log("Appwrite Service :: Get Likes By User And Post :: Error :: ", error);
-            throw error; 
-        }
-    }
+    //         // Check if any likes were found
+    //         if (result.documents.length > 0) {
+    //             return true; // Return true if likes exist for the given user and post
+    //         } else {
+    //             return false; // Return false if no likes were found
+    //         }
+    //     } catch (error) {
+    //         console.log("Appwrite Service :: Get Likes By User And Post :: Error :: ", error);
+    //         throw error; 
+    //     }
+    // }
 
 
     // File upload Service|Method

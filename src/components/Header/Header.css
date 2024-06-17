@@ -1,0 +1,5 @@
+.github-link:hover .github-path {
+    fill: grey;
+    transition-duration: 0.3s;
+  }
+   
