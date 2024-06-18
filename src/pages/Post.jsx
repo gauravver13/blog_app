@@ -31,8 +31,8 @@ export default function Post() {
       appwriteService.getPost(slug).then((post) => {
         if (post) {
           setPost(post);
-          setLikesCount(post.likes || 0);
-          checkUserLikedPost(userData.$id, post.$id);
+          // setLikesCount(post.likes || 0);
+          // checkUserLikedPost(userData.$id, post.$id);
         } else {
           navigate("/");
         }

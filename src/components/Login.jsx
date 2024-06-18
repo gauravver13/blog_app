@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login as authLogin } from "../store/authSlice";
 import authService from '../appwrite/auth';
-import { Logo, Button, Input } from "./index";
+import { Logo, Button, Input, Loader } from "./index";
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
-import { Loader } from './index';
 // import { MovingButton } from './ui/moving-border';
 
 function Login() {
